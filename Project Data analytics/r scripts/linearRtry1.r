@@ -6,7 +6,7 @@ head(Boston,5)
 #we want to split the dataset into train and testing values
 
 set.seed(2)
-install.packages('caTools')
+
 library(caTools)
 
 #we divide the dataset with 0.7 ratio
@@ -20,12 +20,12 @@ testing.ds<-subset(Boston,split=="FALSE")
 cr<-cor(Boston)
 
 #we plot the correlation
-install.packages('corrplot')
-library(corrplot)
+
+
 corrplot(cr,type="lower")
 
 #
-install.packages('car')
+
 library(car)
 
 model<-lm(medv~.,data = training.ds)
