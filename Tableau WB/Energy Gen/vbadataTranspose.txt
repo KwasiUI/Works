@@ -1,0 +1,58 @@
+'Entry point for RibbonX button click
+Sub ShowATPDialog(control As IRibbonControl)
+    Application.Run ("fDialog")
+End Sub
+
+'Callback for RibbonX button label
+Sub GetATPLabel(control As IRibbonControl, ByRef label)
+    label = ThisWorkbook.Sheets("RES").Range("A10").Value
+End Sub
+
+Sub Transpose()
+
+Dim country As String
+Dim row As Long
+Dim col As Long
+Dim desRow As Long
+Dim desCol As Long
+Dim year As Integer
+Dim energy As String
+Dim count As Integer
+Dim val As Integer
+
+
+row = 16
+col = 2
+
+desRow = 2
+
+count = 0
+
+Worksheets("S1").Cells.ClearContents
+While Worksheets("W1").Cells(row, col - 1) <> ""
+
+    If ((row - 16 + 14) Mod 14) <> 0 Then
+        While Worksheets("W1").Cells(1, col) <> ""
+            Worksheets("S1").Cells(desRow, 1) = country
+            Worksheets("S1").Cells(desRow, 2) = Worksheets("W1").Cells(row, 1)
+            Worksheets("S1").Cells(desRow, 3) = Worksheets("W1").Cells(1, col)
+            Worksheets("S1").Cells(desRow, 4) = Worksheets("W1").Cells(row, col)
+            col = col + 1
+            desRow = desRow + 1
+        Wend
+        col = 2
+
+    End If
+    If ((row - 16 + 14) Mod 14) = 0 Then
+        country = Worksheets("W1").Cells(row, 1)
+    End If
+    
+    row = row + 1
+Wend
+
+
+End Sub
+
+
+
+
