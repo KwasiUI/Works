@@ -443,3 +443,60 @@ INNER join tbldistrict on tbldistrict.DistrictID=tblfinancialyear.DistrictID
 inner join tblsector on  tblfyearsector.SectorID=tblsector.SectorID
 INNER join tblproject on tblproject.ProjectID=tblbudget.ProjectID
 inner join tblcategory on tblcategory.CategoryID=tblbudget.CategoryID
+
+
+trigger req check
+BEGIN
+DECLARE balance DECIMAL(10,2);
+
+IF (NEW.RevenueTypeID = 1) THEN 
+SET @balance = (SELECT tblbudget.DSIPActualBalance FROM tblbudget INNER JOIN tblrequisition ON tblrequisition.BudgetID = tblbudget.BudgetID WHERE tblbudget.BudgetID = tblrequisition.BudgetID);
+IF (@balance < NEW.amount) THEN
+
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'Insufficient Funds In DSIP Balance';
+END IF;
+END IF;
+
+IF (NEW.RevenueTypeID = 2) THEN 
+SET @balance = (SELECT tblbudget.GoPNGActualBalance FROM tblbudget INNER JOIN tblrequisition ON tblrequisition.BudgetID = tblbudget.BudgetID WHERE tblbudget.BudgetID = tblrequisition.BudgetID);
+IF (@balance < NEW.amount) THEN
+
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'Insufficient Funds in GoPNG balance';
+END IF;
+END IF;
+
+
+END
+
+
+triger reqapproval
+BEGIN
+DECLARE balance DECIMAL(10,2);
+DECLARE amount DECIMAL(10,2);
+DECLARE rtid INT;
+
+SET @amount = (SELECT tblrequisition.Amount FROM tblrequisition WHERE tblrequisition.RequisitionID=NEW.RequisitionID);
+
+SET @rtid = (SELECT tblrequisition.RevenueTypeID FROM tblrequisition WHERE tblrequisition.RequisitionID=NEW.RequisitionID);
+
+IF (@rtid = 1) THEN 
+SET @balance = (SELECT tblbudget.DSIPActualBalance FROM tblbudget INNER JOIN tblrequisition ON tblrequisition.BudgetID = tblbudget.BudgetID WHERE tblrequisition.RequisitionID = NEW.RequisitionID);
+IF (@balance < @amount) THEN SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'Insufficient Funds In DSIP Balance';
+END IF;
+END IF;
+
+IF (@rtid = 2) THEN 
+SET @balance = (SELECT tblbudget.GoPNGActualBalance FROM tblbudget INNER JOIN tblrequisition ON tblrequisition.BudgetID = tblbudget.BudgetID WHERE tblrequisition.RequisitionID = NEW.RequisitionID);
+IF (@balance < @amount) THEN SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'Insufficient Funds In DSIP Balance';
+END IF;
+END IF;
+
+
+
+END
+
+
