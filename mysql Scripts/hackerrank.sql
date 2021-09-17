@@ -12,3 +12,20 @@ select distinct city, length(city)
 from station
 order by length(city) desc,city desc
 limit 1;
+
+/*Query the list of CITY names starting with vowels (i.e., a, e, i, o, or u) from STATION. Your result cannot contain duplicates.*/
+select city 
+from station
+where city like 'a%'or city like 'e%' or city like 'i%'or city like 'o%'or city like'u%';
+
+
+/*starts and ends with vowels*/
+SELECT DISTINCT city
+FROM   station
+WHERE  city RLIKE '^[aeiou].*[aeiou]$'
+
+/*Query the list of CITY names from STATION that do not start with vowels and do not end with vowels. 
+Your result cannot contain duplicates.*/
+SELECT DISTINCT city
+FROM   station
+WHERE  city not RLIKE '^[aeiou]'  and city not RLIKE '[aeiou]$'
